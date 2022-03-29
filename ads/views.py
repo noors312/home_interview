@@ -13,7 +13,12 @@ from rest_framework.views import APIView
 
 from ads.filters import AdStatsFilterSet
 from ads.models import AdRequest, Impression
-from ads.serializers import GetAdRequestSerializer, AdStatsSerializer, AdDataSerializer, ImpressionSerializer
+from ads.serializers import (
+    GetAdRequestSerializer,
+    AdStatsSerializer,
+    AdDataSerializer,
+    ImpressionSerializer,
+)
 
 
 class GetAdAPIView(APIView):
@@ -22,10 +27,12 @@ class GetAdAPIView(APIView):
     def get(self, request, *args, **kwargs):
         serializer = self.request_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
-        ad_response = requests.get(settings.VAST_API_URL).content.decode()  # decode to get string instead of bytes
+        ad_response = requests.get(
+            settings.VAST_API_URL
+        ).content.decode()  # decode to get string instead of bytes
         ad_data = self.parse_xml(ad_response)
         AdRequest(**ad_data, **serializer.validated_data).save()
-        return HttpResponse(ad_response, content_type='text/xml')
+        return HttpResponse(ad_response, content_type="text/xml")
 
     def parse_xml(self, xml_data: str) -> dict:
         """
@@ -35,7 +42,7 @@ class GetAdAPIView(APIView):
         """
         try:
             data = xmltodict.parse(xml_data)
-            ad_data = data.get('VAST').get('Ad').get('InLine')
+            ad_data = data.get("VAST").get("Ad").get("InLine")
             serializer = AdDataSerializer(data=ad_data)
             serializer.is_valid(raise_exception=True)
             return serializer.validated_data
@@ -70,9 +77,9 @@ class GetStatsAPIView(ListAPIView):
             fill_rate = impressions_count
 
         response = {
-            'impression_per_client': impressions_count,
-            'ad_per_client': ad_requests_count,
-            'fill_rate': fill_rate
+            "impression_per_client": impressions_count,
+            "ad_per_client": ad_requests_count,
+            "fill_rate": fill_rate,
         }
         serializer = self.serializer_class(data=response)
         serializer.is_valid(raise_exception=True)
