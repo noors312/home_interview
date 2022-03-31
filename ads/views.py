@@ -79,7 +79,7 @@ class GetStatsAPIView(ListAPIView):
         response = {
             "impression_per_client": impressions_count,
             "ad_per_client": ad_requests_count,
-            "fill_rate": fill_rate,
+            "fill_rate": round(fill_rate, 2),
         }
         serializer = self.serializer_class(data=response)
         serializer.is_valid(raise_exception=True)

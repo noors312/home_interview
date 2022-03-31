@@ -97,4 +97,4 @@ class AdStatsSerializer(serializers.Serializer):
     ad_per_client = serializers.DecimalField(
         decimal_places=2, max_digits=15, required=False
     )
-    fill_rate = serializers.DecimalField(decimal_places=2, required=False, max_digits=2)
+    fill_rate = serializers.DecimalField(decimal_places=2, required=False, max_digits=4)
