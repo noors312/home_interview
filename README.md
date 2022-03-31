@@ -17,3 +17,8 @@ docker-compose up -d
 [GetStats](http://localhost:8000/api/v1/get_stats) - get stats about Impressions and AdRequest
 
 [GetStats](http://localhost:8000/api/v1/impression) - to create Impression
+
+### NOTE
+
+* Please do not be confused by envs/*.env files, it's just for test and run application via docker, in production it
+  will be changed of course
