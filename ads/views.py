@@ -1,4 +1,5 @@
 # Create your views here.
+import time
 from pyexpat import ExpatError
 
 import requests
@@ -29,10 +30,13 @@ class GetAdAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         ad_response = requests.get(
             settings.VAST_API_URL
-        ).content.decode()  # decode to get string instead of bytes
-        ad_data = self.parse_xml(ad_response)
+        )  # decode to get string instead of bytes
+        try:
+            ad_data = self.parse_xml(ad_response.content.decode())
+        except (ExpatError, ValidationError) as e:
+            ad_data = {"duration": 0, "media_files": None, "error": "XML is invalid"}
         AdRequest(**ad_data, **serializer.validated_data).save()
-        return HttpResponse(ad_response, content_type="text/xml")
+        return HttpResponse(ad_response)
 
     def parse_xml(self, xml_data: str) -> dict:
         """
@@ -40,15 +44,11 @@ class GetAdAPIView(APIView):
         :param xml_data: XML data as string got from VAST API
         :return: dict {'duration': int, 'media_files': List[str]}
         """
-        try:
-            data = xmltodict.parse(xml_data)
-            ad_data = data.get("VAST").get("Ad").get("InLine")
-            serializer = AdDataSerializer(data=ad_data)
-            serializer.is_valid(raise_exception=True)
-            return serializer.validated_data
-
-        except ExpatError:
-            raise ValidationError("XML is not valid")
+        data = xmltodict.parse(xml_data)
+        ad_data = data.get("VAST").get("Ad").get("InLine")
+        serializer = AdDataSerializer(data=ad_data)
+        serializer.is_valid(raise_exception=True)
+        return serializer.validated_data
 
 
 class ImpressionCreateAPIView(CreateAPIView):
@@ -70,7 +70,7 @@ class GetStatsAPIView(ListAPIView):
         ad_requests = self.filter_queryset(AdRequest.objects.all())
         impressions = self.filter_queryset(Impression.objects.all())
         impressions_count = impressions.count()
-        ad_requests_count = ad_requests.count() or 1
+        ad_requests_count = ad_requests.count()
         try:
             fill_rate = impressions_count / ad_requests_count
         except ZeroDivisionError:

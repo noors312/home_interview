@@ -12,7 +12,7 @@ class AdRequest(models.Model):
     country_code = models.CharField(max_length=255)
     error = models.CharField(max_length=255, null=True, blank=True)
     duration = models.BigIntegerField()
-    media_files = models.URLField()
+    media_files = models.URLField(null=True, blank=True)
 
 
 class Impression(models.Model):

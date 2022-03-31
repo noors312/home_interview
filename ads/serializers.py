@@ -82,14 +82,8 @@ class AdDataSerializer(serializers.Serializer):
     def validate(self, attrs):
         super(AdDataSerializer, self).validate(attrs)
         response = {
-            "duration": attrs.get("creatives")
-                .get("creative")
-                .get("linear")
-                .get("duration"),
-            "media_files": attrs.get("creatives")
-                .get("creative")
-                .get("linear")
-                .get("media_files"),
+            "duration": attrs.get("creatives").get("creative").get("linear").get("duration"),
+            "media_files": attrs.get("creatives").get("creative").get("linear").get("media_files"),
             "error": attrs.get("error"),
         }
         return response
