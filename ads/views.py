@@ -1,5 +1,4 @@
 # Create your views here.
-import time
 from pyexpat import ExpatError
 
 import requests
@@ -42,7 +41,7 @@ class GetAdAPIView(APIView):
         """
         Here I use xmltodict package to parse XML data to dict cause it's easier work with dict
         :param xml_data: XML data as string got from VAST API
-        :return: dict {'duration': int, 'media_files': List[str]}
+        :return: dict {'duration': int, 'media_files': url}
         """
         data = xmltodict.parse(xml_data)
         ad_data = data.get("VAST").get("Ad").get("InLine")
