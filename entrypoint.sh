@@ -7,4 +7,4 @@ set -o errexit
 python /app/manage.py migrate --noinput
 python /app/manage.py collectstatic --noinput
 
-exec gunicorn home_interview.asgi:application --preload --workers=3 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000
+exec gunicorn home_interview.wsgi:application --preload --workers=3 -b 0.0.0.0:8000
